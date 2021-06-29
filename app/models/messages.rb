@@ -4,9 +4,24 @@ class Messages < ActiveResource::Base
     self.site = ENV["POSTGREST_URL"]
     self.headers['Authorization'] = "Bearer #{ENV["POSTGREST_TOKEN"]}"
     self.include_format_in_path = false
-    self.element_name = "usermessagesbyguild"
 
     def self.collection_name
         self.element_name
     end
+end
+
+class FullView < Messages
+    self.element_name = "fullview"
+end
+
+class UserMessagesByGuild < Messages
+    self.element_name = "usermessagesbyguild"
+end
+
+class UserMessagesByChannel < Messages
+    self.element_name = "usermessagesbychannel"
+end
+
+class MessagesByChannel < Messages
+    self.element_name = "messagesbychannel"
 end
