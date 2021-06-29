@@ -1,4 +1,4 @@
-# Vegestas Web Application
+# Vegebot Statistics Web Application
 
 This application is to be used along side the discord bot: [Vegebot](https://github.com/Tomay0/VegeBot)
 

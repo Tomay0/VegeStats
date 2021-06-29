@@ -10,6 +10,18 @@ class Messages < ActiveResource::Base
     end
 end
 
+class DiscordChannels < Messages
+    self.element_name = "discordchannels"
+end
+
+class DiscordUsers < Messages
+    self.element_name = "discordusers"
+end
+
+class DiscordGuilds < Messages
+    self.element_name = "discordguilds"
+end
+
 class FullView < Messages
     self.element_name = "fullview"
 end
