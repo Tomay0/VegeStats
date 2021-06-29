@@ -15,7 +15,15 @@
     <h3>Vegebot Statistics</h3>
     <p>ID: <%= @id %></p>
 
-    
+    <ol>
+
+    <%sorted_ids = @data.keys.sort_by {|channel_id| -@data[channel_id][:count]}
+
+    sorted_ids.each do |channel_id| %>
+      <li><%= @data[channel_id][:name] %>: <%= @data[channel_id][:count] %></li>
+    <% end %>
+
+    </ol>
     
   </div>
 </main>
