@@ -13,6 +13,16 @@
 <main>
   <div class="container mt-4">
     <h3>Vegebot Statistics</h3>
-    <p>ID: <%= @id %></p>
+    <p>ID: <%= @id %> <br>
+    </p>
+    <ol>
+
+    <%sorted_ids = @data.keys.sort_by {|user_id| -@data[user_id][:count]}
+
+    sorted_ids.each do |user_id| %>
+      <li><%= @data[user_id][:name] %>: <%= @data[user_id][:count] %></li>
+    <% end %>
+
+    </ol>
   </div>
 </main>
