@@ -1,29 +1,8 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-  <div class="container">
-    <%= link_to "Vegebot Statistics", {controller: "stats", id: @id}, class: "navbar-brand" %>
-    <div class="collpase navbar-collapse">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <li class="nav-item"><%= link_to "User Messages", {controller: "stats", id: @id, action: "user_messages"}, class:"nav-link" %></li>
-        <li class="nav-item active"><%= link_to "Channel Messages", {controller: "stats", id: @id, action: "channel_messages"}, class:"nav-link" %></li>
-      </ul>
-    </div>
-  </div>
-</nav>
+<h3>Channel Message Statistics for <%= @server_name %></h3>
 
-<main>
-  <div class="container mt-4">
-    <h3>Vegebot Statistics</h3>
-    <p>ID: <%= @id %></p>
-
-    <ol>
-
-    <%sorted_ids = @data.keys.sort_by {|channel_id| -@data[channel_id][:count]}
-
-    sorted_ids.each do |channel_id| %>
-      <li><%= @data[channel_id][:name] %>: <%= @data[channel_id][:count] %></li>
-    <% end %>
-
-    </ol>
-    
-  </div>
-</main>
+<ol>
+<%sorted_ids = @data.keys.sort_by {|channel_id| -@data[channel_id][:count]}
+sorted_ids.each do |channel_id| %>
+  <li><%= @data[channel_id][:name] %>: <%= @data[channel_id][:count] %></li>
+<% end %>
+</ol>
