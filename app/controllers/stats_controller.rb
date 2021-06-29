@@ -11,4 +11,5 @@ class StatsController < ApplicationController
         @id = params[:id]
         @type = "Channels"
     end
+    
 end
