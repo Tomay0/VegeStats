@@ -12,19 +12,14 @@ class StatsController < ApplicationController
         @server_name = server.guild_name
         return true
     end
-    def index
-        if !get_server()
-            render "stats/404"
-            return
-        end
-    end
     def user_messages
         if !get_server()
             render "stats/404"
             return
         end
         returned_data = UserMessagesByGuild.where(guild_id: "eq.#{@id}")
-        @data = Hash[returned_data.collect {|item| [item.user_id, {:name => item.user_name, :count => item.count}]}]
+        data_unsorted = returned_data.map {|item| [item.user_name, item.count]}
+        @data = data_unsorted.sort_by {|item| -item[1]}
     end
     def channel_messages
         if !get_server()
@@ -32,7 +27,8 @@ class StatsController < ApplicationController
             return
         end
         returned_data = MessagesByChannel.where(guild_id: "eq.#{@id}")
-        @data = Hash[returned_data.collect {|item| [item.channel_id, {:name => item.channel_name, :count => item.count}]}]
+        data_unsorted = returned_data.map {|item| [item.channel_name, item.count]}
+        @data = data_unsorted.sort_by {|item| -item[1]}
     end
     
 end

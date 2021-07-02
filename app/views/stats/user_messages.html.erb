@@ -1,8 +1,3 @@
 <h3>User Message Statistics for <%= @server_name %></h3>
 
-<ol>
-<%sorted_ids = @data.keys.sort_by {|user_id| -@data[user_id][:count]}
-sorted_ids.each do |user_id| %>
-  <li><%= @data[user_id][:name] %>: <%= @data[user_id][:count] %></li>
-<% end %>
-</ol>
+<%= bar_chart @data, xtitle: "Message Count", ytitle: "Username", title: "Total user messages", height: "#{barchart_height(@data.length())}px"%>
