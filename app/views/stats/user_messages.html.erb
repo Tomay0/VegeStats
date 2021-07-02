@@ -1,3 +1,21 @@
-<h3>User Message Statistics for <%= @server_name %></h3>
+<h1>User Message Statistics for <%= @server_name %></h1>
 
-<%= bar_chart @data, xtitle: "Message Count", ytitle: "Username", title: "Total user messages", height: "#{barchart_height(@data.length())}px"%>
+
+<div class="card mt-5">
+    <div class="card-header">
+        <h3>Total user messages</h3>
+    </div>
+    <div class="card-body">
+        <%= bar_chart @total_user_messages, xtitle: "Message Count", ytitle: "Username", height: "#{barchart_height(@total_user_messages.length())}px"%>
+    </div>
+</div>
+
+
+<div class="card mt-5">
+    <div class="card-header">
+        <h3>Messages sent per month</h3>
+    </div>
+    <div class="card-body">
+        <%= line_chart @messages_by_month, xtitle: "Time", ytitle: "Message Count", height: "600px" %>
+    </div>
+</div>

@@ -22,6 +22,10 @@ class DiscordGuilds < Messages
     self.element_name = "discordguilds"
 end
 
+class DiscordMessages < Messages
+    self.element_name = "discordmessages"
+end
+
 class FullView < Messages
     self.element_name = "fullview"
 end
@@ -36,4 +40,12 @@ end
 
 class MessagesByChannel < Messages
     self.element_name = "messagesbychannel"
+end
+
+class UserMessagesByDay < Messages
+    self.element_name = "usermessagesbyday"
+end
+
+class UserMessagesByMonth < Messages
+    self.element_name = "usermessagesbymonth"
 end
