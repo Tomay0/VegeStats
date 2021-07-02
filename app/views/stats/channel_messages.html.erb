@@ -1,3 +1,10 @@
-<h3>Channel Message Statistics for <%= @server_name %></h3>
+<h1>Channel Message Statistics for <%= @server_name %></h1>
 
-<%= bar_chart @data, xtitle: "Message Count", ytitle: "Channel name", title: "Total channel messages", height: "#{barchart_height(@data.length())}px"%>
+<div class="card mt-5">
+    <div class="card-header">
+        <h3>Total channel messages</h3>
+    </div>
+    <div class="card-body">
+        <%= bar_chart @data, xtitle: "Message Count", ytitle: "Channel name", height: "#{barchart_height(@data.length())}px"%>
+    </div>
+</div>
