@@ -18,11 +18,12 @@
             <li class="<%= @action == 'user_messages' ? "nav-item active" : "nav-item" %>"><%= link_to "User Messages", {controller: "stats", id: @id, action: "user_messages"}, class:"nav-link" %></li>
             <li class="<%= @action == 'channel_messages' ? "nav-item active" : "nav-item" %>"><%= link_to "Channel Messages", {controller: "stats", id: @id, action: "channel_messages"}, class:"nav-link" %></li>
             <li class="<%= @action == 'top_words' ? "nav-item active" : "nav-item" %>"><%= link_to "Top Words", {controller: "stats", id: @id, action: "top_words"}, class:"nav-link" %></li>
+            <li class="<%= @action == 'user_disproportionate_words' ? "nav-item active" : "nav-item" %>"><%= link_to "User Disproportionate Words", {controller: "stats", id: @id, action: "user_disproportionate_words"}, class:"nav-link" %></li>
           </ul>
         </div>
       </div>
     </nav>
-    
+
     <main>
       <div class="container mt-4">
         <%= yield %>
