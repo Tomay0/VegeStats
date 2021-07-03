@@ -1,0 +1,30 @@
+<h1>User word count search</h1>
+<br>
+
+<%= form_tag("/stats/#{@id}/word_search/", :method => "get") do %>  
+  <div class="form-group d-md-flex">  
+    <%= search_field_tag :search, params[:search], placeholder: "Search", class: "form-control" %>  
+    <div class="input-group-btn">  
+      <%= button_tag "Search", :class => 'btn btn-primary px-5',:name => nil%>  
+    </div>  
+  </div>  
+<% end %>
+
+<% if !@search.nil?  %>
+  <% if @search_formatted.length() > 0 && @total_occurences > 0 %>
+      <div class="card mt-5">
+        <div class="card-header">
+            <h3>"<%= @search_formatted %>" occurences by user</h3>
+        </div>
+        <div class="card-body">
+            <p> Total occurences: <%= @total_occurences %></p>
+            <br>
+            <%= bar_chart @user_word_count, xtitle: "Word Count", ytitle: "Username", colors: default_colors(), height: "#{barchart_height(@user_word_count.length())}px"%>
+        </div>
+      </div>
+  <% else %>
+    <br>
+    <p>We could not find any instances of the word, <%= @search %>.</p>
+    <p>Note that a number does not count as a word, and symbols and punctuation are removed from your search.</p>
+  <% end %>
+<% end %>

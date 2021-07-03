@@ -2,7 +2,7 @@
 
 <html>
   <head>
-    <title>Vegestats</title>
+    <title><%= @server_name %> statistics</title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
@@ -12,13 +12,14 @@
   <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
       <div class="container">
-        <span class="navbar-brand mb-0 h1">Vegebot Statistics</span>
+        <span class="navbar-brand mb-0 h1"><%= @server_name %> statistics</span>
         <div class="collpase navbar-collapse">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <li class="<%= @action == 'user_messages' ? "nav-item active" : "nav-item" %>"><%= link_to "User Messages", {controller: "stats", id: @id, action: "user_messages"}, class:"nav-link" %></li>
             <li class="<%= @action == 'channel_messages' ? "nav-item active" : "nav-item" %>"><%= link_to "Channel Messages", {controller: "stats", id: @id, action: "channel_messages"}, class:"nav-link" %></li>
             <li class="<%= @action == 'top_words' ? "nav-item active" : "nav-item" %>"><%= link_to "Top Words", {controller: "stats", id: @id, action: "top_words"}, class:"nav-link" %></li>
             <li class="<%= @action == 'user_disproportionate_words' ? "nav-item active" : "nav-item" %>"><%= link_to "User Disproportionate Words", {controller: "stats", id: @id, action: "user_disproportionate_words"}, class:"nav-link" %></li>
+            <li class="<%= @action == 'word_search' ? "nav-item active" : "nav-item" %>"><%= link_to "Word Search", {controller: "stats", id: @id, action: "word_search"}, class:"nav-link" %></li>
           </ul>
         </div>
       </div>
