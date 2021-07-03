@@ -15,12 +15,14 @@
         <span class="navbar-brand mb-0 h1">Vegebot Statistics</span>
         <div class="collpase navbar-collapse">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item"><%= link_to "User Messages", {controller: "stats", id: @id, action: "user_messages"}, class:"nav-link" %></li>
-            <li class="nav-item"><%= link_to "Channel Messages", {controller: "stats", id: @id, action: "channel_messages"}, class:"nav-link" %></li>
+            <li class="<%= @action == 'user_messages' ? "nav-item active" : "nav-item" %>"><%= link_to "User Messages", {controller: "stats", id: @id, action: "user_messages"}, class:"nav-link" %></li>
+            <li class="<%= @action == 'channel_messages' ? "nav-item active" : "nav-item" %>"><%= link_to "Channel Messages", {controller: "stats", id: @id, action: "channel_messages"}, class:"nav-link" %></li>
+            <li class="<%= @action == 'top_words' ? "nav-item active" : "nav-item" %>"><%= link_to "Top Words", {controller: "stats", id: @id, action: "top_words"}, class:"nav-link" %></li>
           </ul>
         </div>
       </div>
     </nav>
+    
     <main>
       <div class="container mt-4">
         <%= yield %>

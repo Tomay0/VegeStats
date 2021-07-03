@@ -10,6 +10,7 @@ class StatsController < ApplicationController
         end
 
         @server_name = server.guild_name
+        @action = params[:action]
         return true
     end
 
@@ -93,6 +94,35 @@ class StatsController < ApplicationController
         returned_data = MessagesByChannel.where(guild_id: "eq.#{@id}")
         data_unsorted = returned_data.map {|item| [item.channel_name, item.count]}
         @data = data_unsorted.sort_by {|item| -item[1]}
+    end
+
+    def top_words
+        if !get_server()
+            render "stats/404"
+            return
+        end
+
+        msgs = DiscordMessages.where(guild_id: "eq.#{@id}")
+
+        word_count_hash = {}
+
+        msgs.each do |item|
+            item.message.split() do |word|
+                word_formatted = word.downcase.gsub(/[^a-z0-9\s]+/, '')
+
+                if word_formatted.length() == 0 || word_formatted.match(/\d+/)
+                    next
+                end
+
+                if !word_count_hash.has_key?(word_formatted)
+                    word_count_hash[word_formatted] = 0
+                end
+                
+                word_count_hash[word_formatted] = word_count_hash[word_formatted] + 1
+            end
+        end
+
+        @word_counts = word_count_hash.keys.sort_by {|w| -word_count_hash[w]}.map {|w| [w, word_count_hash[w]]}
     end
     
 end
