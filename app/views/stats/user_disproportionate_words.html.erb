@@ -1,4 +1,4 @@
-<h1>Top disproportionate words for each user on <%= @server_name %></h1>
+<h1>Top disproportionate words for each user</h1>
 
 <p>
 This shows words that particular users use more frequently than others. 
@@ -15,7 +15,7 @@ The users are ordered by total number of messages.
     </div>
     <div class="card-body">
         <%= bar_chart item[1], suffix: "%", xtitle: "Percentage frequency", 
-            ytitle: "Word", height: "#{barchart_height(item[1].length())}px"
+            ytitle: "Word", colors: default_colors(), height: "#{barchart_height(item[1].length())}px"
         %>
     </div>
 </div>

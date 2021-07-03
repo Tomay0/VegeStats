@@ -21,6 +21,51 @@ class StatsController < ApplicationController
     def day_format(time)
         return time.strftime("%e %b %Y")
     end
+    
+    def format_word(word)
+        word_formatted = word.downcase.gsub(/[^a-z0-9\s]+/, '')
+
+        if word_formatted.match(/\d+/)
+            return ""
+        end
+
+        word_formatted
+    end
+
+    def user_word_counts
+        msgs = DiscordMessages.where(guild_id: "eq.#{@id}")
+
+        @word_count_by_user = {}
+        @word_count_hash = {}
+
+        msgs.each do |item|
+            u_id = item.user_id
+            if !@word_count_by_user.has_key?(u_id)
+                @word_count_by_user[u_id] = {}
+            end
+
+            item.message.split() do |word|
+                # Format the word
+                word_formatted = format_word(word)
+
+                if word_formatted.length() == 0
+                    next
+                end
+                
+                # Add to hash
+                if !@word_count_hash.has_key?(word_formatted)
+                    @word_count_hash[word_formatted] = 0
+                end
+                if !@word_count_by_user[u_id].has_key?(word_formatted)
+                    @word_count_by_user[u_id][word_formatted] = 0
+                end
+                
+                @word_count_hash[word_formatted] = @word_count_hash[word_formatted] + 1
+                @word_count_by_user[u_id][word_formatted] = @word_count_by_user[u_id][word_formatted] + 1
+            end
+        end
+
+    end
 
     def user_messages
         if !get_server()
@@ -102,30 +147,9 @@ class StatsController < ApplicationController
             return
         end
 
-        msgs = DiscordMessages.where(guild_id: "eq.#{@id}")
+        user_word_counts()
 
-        # Obtain all words in a hash
-        word_count_hash = {}
-
-        msgs.each do |item|
-            item.message.split() do |word|
-                # Format the word
-                word_formatted = word.downcase.gsub(/[^a-z0-9\s]+/, '')
-
-                if word_formatted.length() == 0 || word_formatted.match(/\d+/)
-                    next
-                end
-                
-                # Add to hash
-                if !word_count_hash.has_key?(word_formatted)
-                    word_count_hash[word_formatted] = 0
-                end
-                
-                word_count_hash[word_formatted] = word_count_hash[word_formatted] + 1
-            end
-        end
-
-        @word_counts = word_count_hash.keys.sort_by {|w| -word_count_hash[w]}.map {|w| [w, word_count_hash[w]]}
+        @word_counts = @word_count_hash.keys.sort_by {|w| -@word_count_hash[w]}.map {|w| [w, @word_count_hash[w]]}
     end
 
     def user_disproportionate_words
@@ -142,46 +166,16 @@ class StatsController < ApplicationController
                 .sort_by {|item| -item.count}
                 .map {|item| item.user_id}
 
-        msgs = DiscordMessages.where(guild_id: "eq.#{@id}")
-
-        word_count_by_user = {}
-        word_count_hash = {}
-
-        msgs.each do |item|
-            u_id = item.user_id
-            if !word_count_by_user.has_key?(u_id)
-                word_count_by_user[u_id] = {}
-            end
-
-            item.message.split() do |word|
-                # Format the word
-                word_formatted = word.downcase.gsub(/[^a-z0-9\s]+/, '')
-
-                if word_formatted.length() == 0 || word_formatted.match(/\d+/)
-                    next
-                end
-                
-                # Add to hash
-                if !word_count_hash.has_key?(word_formatted)
-                    word_count_hash[word_formatted] = 0
-                end
-                if !word_count_by_user[u_id].has_key?(word_formatted)
-                    word_count_by_user[u_id][word_formatted] = 0
-                end
-                
-                word_count_hash[word_formatted] = word_count_hash[word_formatted] + 1
-                word_count_by_user[u_id][word_formatted] = word_count_by_user[u_id][word_formatted] + 1
-            end
-        end
+        user_word_counts()
 
         @min_occurences = 5
         @max_to_show = 20
 
         @disproportionate_words = ordered_users.map { |u_id|
             [user_hash[u_id], 
-            word_count_by_user[u_id].keys
-                .select {|w| word_count_hash[w] >= @min_occurences}
-                .map {|w| [w, 100.0 * word_count_by_user[u_id][w].to_f / word_count_hash[w].to_f]}
+            @word_count_by_user[u_id].keys
+                .select {|w| @word_count_hash[w] >= @min_occurences}
+                .map {|w| [w, 100.0 * @word_count_by_user[u_id][w].to_f / @word_count_hash[w].to_f]}
                 .sort_by {|w| -w[1]}
                 .take(@max_to_show)
             ]
@@ -189,4 +183,41 @@ class StatsController < ApplicationController
 
     end
     
+    def word_search
+        if !get_server()
+            render "stats/404"
+            return
+        end
+
+        @search = params[:search]
+        @total_occurences = 0
+
+        if @search.nil?
+            return
+        end
+
+        @search_formatted = format_word(@search)
+
+        if @search_formatted.length() == 0
+            return
+        end
+
+        # All users
+        user_hash = Hash[DiscordUsers.all.map {|item| [item.user_id, item.user_name]}]
+
+        # Search for counts of word by user
+        user_word_counts()
+        
+        if !@word_count_hash.has_key?(@search_formatted)
+            return
+        end
+        
+        @total_occurences = @word_count_hash[@search_formatted]
+
+        # Create graph
+        @user_word_count = @word_count_by_user.keys()
+                .select { |u_id| @word_count_by_user[u_id].has_key?(@search_formatted)}
+                .sort_by {|u_id| -@word_count_by_user[u_id][@search_formatted]}
+                .map {|u_id| [user_hash[u_id], @word_count_by_user[u_id][@search_formatted]]}
+    end
 end
