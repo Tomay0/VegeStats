@@ -1,5 +1,6 @@
 FROM ruby:3.0.0
 
+ENV APP_PORT=80
 
 EXPOSE $APP_PORT
 
@@ -14,4 +15,4 @@ COPY ./Gemfile.lock /vegestats
 
 RUN bundle update && bundle install
 
-CMD: ["bundle", "exec", "rails", "s", "-e", "development", "-p", $APP_PORT, "-b", "0.0.0.0"]
+CMD ["bundle", "exec", "rails", "s", "-e", "development", "-p", $APP_PORT, "-b", "0.0.0.0"]
