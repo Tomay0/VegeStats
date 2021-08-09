@@ -13,3 +13,5 @@ COPY ./Gemfile /vegestats
 COPY ./Gemfile.lock /vegestats
 
 RUN bundle update && bundle install
+
+CMD: ["bundle", "exec", "rails", "s", "-e", "development", "-p", $APP_PORT, "-b", "0.0.0.0"]
