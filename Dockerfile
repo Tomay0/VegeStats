@@ -10,9 +10,8 @@ RUN apt-get update -qq && apt-get install -y nodejs npm
 RUN npm install --global yarn
 
 WORKDIR /vegestats
-COPY ./Gemfile /vegestats
-COPY ./Gemfile.lock /vegestats
+COPY . /vegestats
 
 RUN bundle update && bundle install
 
-CMD ["bundle", "exec", "rails", "s", "-e", "development", "-p", $APP_PORT, "-b", "0.0.0.0"]
+CMD ["sh", "-c", "bundle exec rails s -p $APP_PORT -b 0.0.0.0"]
