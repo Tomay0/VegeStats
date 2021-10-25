@@ -13,17 +13,3 @@
  *= require_tree .
  *= require_self
  */
-
-.outer-table {
-    display: table;
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 100%;
-}
-
-.inner-table {
-    display: table-cell;
-    vertical-align: middle;
-}

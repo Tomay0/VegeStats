@@ -1,10 +1,24 @@
 version: "3.3"
 
 services:
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_DB: vege_db
+      POSTGRES_USER: auth
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - 5432:5432
+    volumes:
+      - ./tmp/db:/var/lib/postgresql/data
   vegestats:
     build: .
+    volumes:
+      - .:/vegestats
     environment:
-      POSTGREST_TOKEN: $POSTGREST_TOKEN
-      POSTGREST_URL: $POSTGREST_URL
+      POSTGREST_TOKEN: ${POSTGREST_TOKEN}
+      POSTGREST_URL: ${POSTGREST_URL}
+      POSTGRES_USER: auth
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - "80:80"
