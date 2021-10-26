@@ -1,0 +1,10 @@
+<h1>Channel Message Statistics</h1>
+
+<div class="card mt-5">
+    <div class="card-header">
+        <h3>Total channel messages</h3>
+    </div>
+    <div class="card-body">
+        <%= bar_chart @data, xtitle: "Message Count", ytitle: "Channel name", colors: default_colors(), height: "#{barchart_height(@data.length())}px"%>
+    </div>
+</div>

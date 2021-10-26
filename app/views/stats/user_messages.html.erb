@@ -1,0 +1,30 @@
+<h1>User Message Statistics</h1>
+
+
+<div class="card mt-5">
+    <div class="card-header">
+        <h3>Total user messages</h3>
+    </div>
+    <div class="card-body">
+        <%= bar_chart @total_user_messages, xtitle: "Message Count", ytitle: "Username", colors: default_colors(), height: "#{barchart_height(@total_user_messages.length())}px"%>
+    </div>
+</div>
+
+
+<div class="card mt-5">
+    <div class="card-header">
+        <h3>Cumulative message total over time</h3>
+    </div>
+    <div class="card-body">
+        <%= line_chart @cumulative_messages, xtitle: "Time", ytitle: "Message Count", colors: line_colors(@total_user_messages.length()), height: "600px", points: false %>
+    </div>
+</div>
+
+<div class="card mt-5">
+    <div class="card-header">
+        <h3>Messages sent per month</h3>
+    </div>
+    <div class="card-body">
+        <%= line_chart @messages_by_month, xtitle: "Time", ytitle: "Message Count", colors: line_colors(@total_user_messages.length()), height: "600px" %>
+    </div>
+</div>

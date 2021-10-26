@@ -1,0 +1,22 @@
+<h1>Top disproportionate words for each user</h1>
+
+<p>
+This shows words that particular users use more frequently than others. 
+The percentage frequency is the percentage the particular user has said the word compared with all occurrences.
+A word needs to be said at least <%= @min_occurences %> times total to be included in this list.
+A maximum of <%= @max_to_show %> words are shown.
+The users are ordered by total number of messages.
+</p>
+
+<% @disproportionate_words.each do |item| %>
+<div class="card mt-5">
+    <div class="card-header">
+        <h3><%= item[0] %></h3>
+    </div>
+    <div class="card-body">
+        <%= bar_chart item[1], suffix: "%", xtitle: "Percentage frequency", 
+            ytitle: "Word", colors: default_colors(), height: "#{barchart_height(item[1].length())}px"
+        %>
+    </div>
+</div>
+<% end %>
