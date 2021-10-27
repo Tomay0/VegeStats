@@ -9,14 +9,20 @@ services:
       - 5432:5432
     volumes:
       - ./tmp/db:/var/lib/postgresql/data
+  postgrest:
+    image: postgrest/postgrest
+    ports:
+      - 3000:3000
+    environment:
+      PGRST_JWT_SECRET: ${POSTGREST_JWT_SECRET}
+      PGRST_DB_URI: postgres://postgres:${POSTGRES_PASSWORD}@postgres:5432/VegeStats_development
+    depends_on:
+      - postgres
   vegestats:
     build: .
     volumes:
       - .:/vegestats
     environment:
-      POSTGREST_TOKEN: ${POSTGREST_TOKEN}
-      POSTGREST_URL: ${POSTGREST_URL}
-      POSTGRES_USER: auth
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - "80:80"
