@@ -1,9 +1,10 @@
-require "messages"
+require "groupdate"
 
 class StatsController < ApplicationController
     def get_server
         @id = params[:id]
-        server = DiscordGuild.where(guild_id: "eq.#{@id}").first
+
+        server = Guild.where("id = #{@id}").first
         
         if server.nil?
             return false
@@ -33,7 +34,7 @@ class StatsController < ApplicationController
     end
 
     def user_word_counts
-        msgs = DiscordMessage.where(guild_id: "eq.#{@id}")
+        msgs = Message.where("guild_id = #{@id}")
 
         @word_count_by_user = {}
         @word_count_hash = {}
@@ -74,11 +75,12 @@ class StatsController < ApplicationController
         end
         
         # All users
-        user_hash = Hash[DiscordUser.all.map {|item| [item.user_id, item.user_name]}]
+
+        user_hash = Hash[User.all.map {|item| [item.id, item.user_name]}]
 
         # All user total counts
-        totals_hash = Hash[UserMessagesByGuild.where(guild_id: "eq.#{@id}")
-                .map {|item| [item.user_id, item.count]}]
+
+        totals_hash = Message.where("guild_id = #{@id}").group(:user_id).count
         
         # Users ordered by total count
         ordered_users = totals_hash.keys.sort_by {|u_id| -totals_hash[u_id]}
@@ -87,15 +89,30 @@ class StatsController < ApplicationController
         @total_user_messages = ordered_users.map {|u_id| [user_hash[u_id], totals_hash[u_id]]}
 
         # Cumulative messages
-        msg_day = UserMessagesByDay.where(guild_id: "eq.#{@id}")
+        msg_day = Message.where("guild_id = #{@id}").group_by_day(:message_timestamp).group(:user_id).count
+        all_days_unsorted = msg_day.keys.map {|i| i[0]}
 
-        min_day = msg_day.first.message_day.to_datetime
-        max_day = msg_day.last.message_day.to_datetime
-        all_days = (min_day..max_day).map{|t| day_format(t)}.uniq
+        all_days = (all_days_unsorted.min..all_days_unsorted.max).map{|t| day_format(t)}.uniq
 
-        day_records_hash = Hash[msg_day.group_by(&:user_id).map { |u_id, transcripts| 
-            [u_id, Hash[transcripts.map {|item| [day_format(item.message_day.to_datetime), item.count]}]]
-        }]
+
+        # format:
+        # {id => {date => count, date => count}, id => {date => count, date => count}}
+
+        day_records_hash = {}
+
+        msg_day.keys.each do |i|
+            date = day_format(i[0])
+            u_id = i[1]
+            count = msg_day[i]
+
+            if day_records_hash.keys.exclude?(u_id)
+                day_records_hash[u_id] = {}
+            end
+            if day_records_hash[u_id].keys.exclude?(date)
+                day_records_hash[u_id][date] = count
+            end
+            
+        end
 
         prev_day = Hash[ordered_users.map { |u_id| [u_id, 0]}]
         totals = Hash[ordered_users.map { |u_id| [u_id, {}]}]
@@ -113,15 +130,30 @@ class StatsController < ApplicationController
         }
 
         # Messages by month
-        msg_month = UserMessagesByMonth.where(guild_id: "eq.#{@id}")
-        
-        min_month = msg_month.first.message_month.to_datetime
-        max_month = msg_month.last.message_month.to_datetime
-        all_months = (min_month..max_month).map{|t| month_format(t)}.uniq
+        msg_month = Message.where("guild_id = #{@id}").group_by_month(:message_timestamp).group(:user_id).count
+        all_months_unsorted = msg_month.keys.map {|i| i[0]}
 
-        month_records_hash = Hash[msg_month.group_by(&:user_id).map { |u_id, transcripts| 
-            [u_id, Hash[transcripts.map {|item| [month_format(item.message_month.to_datetime), item.count]}]]
-        }]
+        all_months = (all_months_unsorted.min..all_months_unsorted.max).map{|t| month_format(t)}.uniq
+
+
+        # format:
+        # {id => {date => count, date => count}, id => {date => count, date => count}}
+
+        month_records_hash = {}
+
+        msg_month.keys.each do |i|
+            date = month_format(i[0])
+            u_id = i[1]
+            count = msg_month[i]
+
+            if month_records_hash.keys.exclude?(u_id)
+                month_records_hash[u_id] = {}
+            end
+            if month_records_hash[u_id].keys.exclude?(date)
+                month_records_hash[u_id][date] = count
+            end
+            
+        end
 
         @messages_by_month = ordered_users.map { |u_id|
             {name: user_hash[u_id], 
@@ -136,8 +168,8 @@ class StatsController < ApplicationController
             render "stats/404"
             return
         end
-        returned_data = MessagesByChannel.where(guild_id: "eq.#{@id}")
-        data_unsorted = returned_data.map {|item| [item.channel_name, item.count]}
+        returned_data = Message.where("guild_id = #{@id}").group(:channel_id).count
+        data_unsorted = returned_data.map {|c_id, count| [Channel.where("id = #{c_id}").first.channel_name, count]}
         @data = data_unsorted.sort_by {|item| -item[1]}
     end
 
