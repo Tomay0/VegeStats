@@ -4,8 +4,6 @@ services:
   postgres:
     image: postgres
     environment:
-      POSTGRES_DB: vege_db
-      POSTGRES_USER: auth
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - 5432:5432
