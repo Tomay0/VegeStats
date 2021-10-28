@@ -191,12 +191,14 @@ class StatsController < ApplicationController
         end
         
         # All users
-        user_hash = Hash[DiscordUser.all.map {|item| [item.user_id, item.user_name]}]
+        user_hash = Hash[User.all.map {|item| [item.id, item.user_name]}]
+
+        msgs_hash = Message.where("guild_id = #{@id}").group(:user_id).count
+
         
         # Users ordered by total count
-        ordered_users = UserMessagesByGuild.where(guild_id: "eq.#{@id}")
-                .sort_by {|item| -item.count}
-                .map {|item| item.user_id}
+        ordered_users = msgs_hash.keys
+                .sort_by {|user_id| -msgs_hash[user_id]}
 
         user_word_counts()
 
@@ -235,7 +237,7 @@ class StatsController < ApplicationController
         end
 
         # All users
-        user_hash = Hash[DiscordUser.all.map {|item| [item.user_id, item.user_name]}]
+        user_hash = Hash[User.all.map {|item| [item.id, item.user_name]}]
 
         # Search for counts of word by user
         user_word_counts()

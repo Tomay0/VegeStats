@@ -15,7 +15,7 @@ services:
       - 3000:3000
     environment:
       PGRST_JWT_SECRET: ${POSTGREST_JWT_SECRET}
-      PGRST_DB_URI: postgres://postgres:${POSTGRES_PASSWORD}@postgres:5432/VegeStats_development
+      PGRST_DB_URI: postgres://postgres:${POSTGRES_PASSWORD}@postgres:5432/VegeStats_production
     depends_on:
       - postgres
   vegestats:
@@ -24,6 +24,8 @@ services:
       - .:/vegestats
     environment:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      APP_PORT: 80
+      RAILS_ENV: production
     ports:
       - "80:80"
     depends_on:
